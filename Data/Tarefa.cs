@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string Descricao { get; set; }
-        public bool isCompleta { get; set; }
+        public bool IsCompleta { get; set; }
     }
 }

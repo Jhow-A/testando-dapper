@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 using TestandoDapper.Data;
 using TestandoDapper.Repository;
@@ -25,10 +26,26 @@ namespace TestandoDapper.Controllers
         }
 
         [HttpGet]
-        [Route("tarefa")]
+        [Route("tarefa/{id}")]
         public async Task<IActionResult> GetTarefaByIdAsync(int id)
         {
             var tarefa = await _tarefaRepository.GetTarefaByIdAsync(id);
+            return Ok(tarefa);
+        }
+
+        [HttpGet]
+        [Route("tarefaprocedure/{id}")]
+        public async Task<IActionResult> GetTarefaByIdProcedureAsync(int id)
+        {
+            var tarefa = await _tarefaRepository.GetTarefaByIdProcedureAsync(id);
+            return Ok(tarefa);
+        }
+
+        [HttpGet]
+        [Route("tarefasconcluidas")]
+        public async Task<IActionResult> GetTarefasConcluidasAsync()
+        {
+            var tarefa = await _tarefaRepository.GetTarefasConcluidasAsync();
             return Ok(tarefa);
         }
 
@@ -45,7 +62,7 @@ namespace TestandoDapper.Controllers
         public async Task<IActionResult> SaveAsync(Tarefa tarefa)
         {
             var result = await _tarefaRepository.SaveAsync(tarefa);
-            return Ok(result);
+            return Created(new Uri($"/api/Tarefas/tarefa/{tarefa.Id}", UriKind.Relative), result);
         }
 
         [HttpPut]
@@ -61,7 +78,7 @@ namespace TestandoDapper.Controllers
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var result = await _tarefaRepository.DeleteAsync(id);
-            return Ok(result);
+            return NoContent();
         }
     }
 }

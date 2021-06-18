@@ -8,6 +8,8 @@ namespace TestandoDapper.Repository
     {
         Task<IEnumerable<Tarefa>> GetTarefasAsync();
         Task<Tarefa> GetTarefaByIdAsync(int id);
+        Task<Tarefa> GetTarefaByIdProcedureAsync(int id);
+        Task<IEnumerable<Tarefa>> GetTarefasConcluidasAsync();
         Task<IEnumerable<Tarefa>> GetTarefasEContadorByIdAsync(out int count);
         Task<int> SaveAsync(Tarefa tarefa);
         Task<int> UpdateTarefaStatusAsync(Tarefa tarefa);

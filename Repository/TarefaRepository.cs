@@ -1,13 +1,13 @@
 ﻿using Dapper;
-using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using TestandoDapper.Data;
 
 namespace TestandoDapper.Repository
 {
-    public class TarefaRepository : ITarefaRepository
+    public sealed class TarefaRepository : ITarefaRepository
     {
         private readonly DbSession _db;
 
@@ -92,6 +92,40 @@ namespace TestandoDapper.Repository
                 var result = await connetion.ExecuteAsync(sql: command, param: new { id });
 
                 return result;
+            }
+        }
+
+        public async Task<Tarefa> GetTarefaByIdProcedureAsync(int id)
+        {
+            using (var connetion = _db.Connection)
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("@Id", id, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@Descricao", dbType: DbType.String, direction: ParameterDirection.ReturnValue);
+                parameter.Add("@IsCompleta", dbType: DbType.Boolean, direction: ParameterDirection.ReturnValue);
+                parameter.Add("@RowCount", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
+
+                var storageProcedure = "SelectTarefaById";
+                var tarefa = await connetion.QueryFirstOrDefaultAsync<Tarefa>(sql: storageProcedure, param: parameter, commandType: CommandType.StoredProcedure);
+
+                return tarefa;
+            }
+        }
+
+        public async Task<IEnumerable<Tarefa>> GetTarefasConcluidasAsync()
+        {
+            using (var connetion = _db.Connection)
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("@Id", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
+                parameter.Add("@Descricao", dbType: DbType.String, direction: ParameterDirection.ReturnValue);
+                parameter.Add("@IsCompleta", dbType: DbType.Boolean, direction: ParameterDirection.ReturnValue);
+                parameter.Add("@RowCount", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
+
+                var storageProcedure = "SelectTarefasConcluidas";
+                var tarefas = await connetion.QueryAsync<Tarefa>(sql: storageProcedure, param: parameter, commandType: CommandType.StoredProcedure);
+
+                return tarefas;
             }
         }
     }
